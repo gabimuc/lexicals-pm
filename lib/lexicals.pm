@@ -66,7 +66,7 @@ sub lex_all {
     #print "PW_all before delete:\n";
     #print Dumper $pw_all;
     # get rid of the uninteresting rubbish in the hash
-    delete $pw_all->{$_} for keys %{$pw_out};
+    #delete $pw_all->{$_} for keys %{$pw_out};
     #print "PW_all:\n";
     #print Dumper $pw_all;
     my $s = "s";
