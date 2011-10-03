@@ -38,12 +38,10 @@ sub lex_local {
     print "PW_all:\n";
     print Dumper $pw_all;
     my $s = "s";
-    my $scal = \$s;
-    my $ref  = \\$s;
     return +{
         map {
             my $v = $pw_all->{$_};
-            $v = $$v if ( ref($v) eq ref($scal) || ref($v) eq ref($ref) );
+            $v = $$v if ( ref($v) eq ref(\$s) || ref($v) eq ref(\\$s) );
             s/^[\$\@\%\*]//;
             ($_, $v);
         } reverse sort keys %$pw_all
