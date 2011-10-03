@@ -21,11 +21,13 @@ use base 'Exporter';
 our @EXPORT = qw(lexicals);
 
 sub lexicals {
+    use Carp;
     my $pw_all = PadWalker::peek_my(1);
     my $pw_out = PadWalker::peek_my(2);
-    my $local = "";
+    my $local = "0";
     return lex_all($pw_all, $pw_out) unless $local; 
-    return lex_local($pw_all, $pw_out) unless $local; 
+    return lex_local($pw_all, $pw_out) if $local; 
+    confess "ERROR: No return value for package lexicals";
 }
 
 sub lex_local {
