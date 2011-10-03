@@ -16,14 +16,14 @@ sub foo {
     my $r_inside = \$s;
     my $r2_inside = \\$s;
 
-    my $l_all = lexicals;
+    my $l_all = lexicals::lex_all;
 
     my $x_inside = 7;
     my @x_inside = (3, 4);
     my %x_inside = (1, 3, 2, 1);
 
-    $l_all = lexicals;
-    $l_local = lex_local;
+    $l_all = lexicals::lex_all;
+    $l_local = lexicals::lex_local;
 
     is $l_all->{x_inside}, 7, 'Scalar wins on match';
     is ref($l_all->{h_inside}), 'HASH', 'lexical hashes are ok';

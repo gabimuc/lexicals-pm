@@ -8,13 +8,13 @@ sub foo {
     my $s = 42;
     my $r = \$s;
     my $r2 = \\$s;
-    my $l = lexicals;
+    my $l = lexicals::lex_all;
     #print Dumper lexicals;
     my $x = 7;
     my @x = (3, 4);
     my %x = (1, 3, 2, 1);
 
-    $l = lexicals;
+    $l = lexicals::lex_all;
     #print Dumper lexicals;
     is $l->{x}, 7, 'Scalar wins on match';
     is ref($l->{h}), 'HASH', 'lexical hashes are ok';

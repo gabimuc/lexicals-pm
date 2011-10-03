@@ -18,28 +18,30 @@ package lexicals;
 our $VERSION = '0.21';
 
 use base 'Exporter';
-our @EXPORT = qw(lexicals);
+our @EXPORT = qw(lex_local lex_all);
 
 use Data::Dumper;
 
-sub lexicals {
-    use Carp;
+#sub lexicals {
+#use Carp;
     #print "############# IN LEXEXICALS #########################:\n";
-    my $pw_all = PadWalker::peek_my(1);
-    my $pw_out = PadWalker::peek_my(2);
+    #my $pw_all = PadWalker::peek_my(1);
+    #my $pw_out = PadWalker::peek_my(2);
     #print "PW_OUT incoming:\n";
     #print Dumper $pw_out;
     #print "PW_ALL incomin:\n";
     #print Dumper $pw_all;
-    my $local = "0";
-    return lex_all($pw_all, $pw_out) unless $local; 
-    return lex_local($pw_all, $pw_out) if $local; 
-    confess "ERROR: No return value for package lexicals";
-}
+    #my $local = "0";
+    #return lex_all($pw_all, $pw_out) unless $local; 
+    #return lex_local($pw_all, $pw_out) if $local; 
+    #confess "ERROR: No return value for package lexicals";
+#}
 
 sub lex_local {
     #print "############# IN LEX_LOCAL #########################:\n";
-    my ($pw_all, $pw_out) = @_;
+    #my ($pw_all, $pw_out) = @_;
+    my $pw_all = PadWalker::peek_my(1);
+    my $pw_out = PadWalker::peek_my(2);
     #print "PW_OUT before delete:\n";
     #print Dumper $pw_out;
     #print "PW_ALL before delete:\n";
@@ -60,7 +62,9 @@ sub lex_local {
 }
 sub lex_all {
     #print "############# IN LEX_ALL #########################:\n";
-    my ($pw_all, $pw_out) = @_;
+    #my ($pw_all, $pw_out) = @_;
+    my $pw_all = PadWalker::peek_my(1);
+    my $pw_out = PadWalker::peek_my(2);
     #print "PW_OUT:\n";
     #print Dumper $pw_out;
     #print "PW_all before delete:\n";

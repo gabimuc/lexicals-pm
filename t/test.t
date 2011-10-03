@@ -7,9 +7,9 @@ sub example {
     my $worth;
     my $is = 'xxx';
     my $overrated = $self;
-    my $lex1 = lexicals;
+    my $lex1 = lexicals::lex_all;
     my $what;
-    my $lex2 = lexicals;
+    my $lex2 = lexicals::lex_all;
     test($lex1, "is overrated self worth");
     test($lex2, "is lex1 overrated self what worth");
 }
