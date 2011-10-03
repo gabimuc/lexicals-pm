@@ -20,10 +20,17 @@ our $VERSION = '0.21';
 use base 'Exporter';
 our @EXPORT = qw(lexicals);
 
+use Data::Dumper;
+
 sub lexicals {
     use Carp;
+    #print "############# IN LEXEXICALS #########################:\n";
     my $pw_all = PadWalker::peek_my(1);
     my $pw_out = PadWalker::peek_my(2);
+    #print "PW_OUT incoming:\n";
+    #print Dumper $pw_out;
+    #print "PW_ALL incomin:\n";
+    #print Dumper $pw_all;
     my $local = "0";
     return lex_all($pw_all, $pw_out) unless $local; 
     return lex_local($pw_all, $pw_out) if $local; 
@@ -31,14 +38,16 @@ sub lexicals {
 }
 
 sub lex_local {
+    #print "############# IN LEX_LOCAL #########################:\n";
     my ($pw_all, $pw_out) = @_;
-    use Data::Dumper;
-    #print "PW_OUT:\n";
-    print Dumper $pw_out;
+    #print "PW_OUT before delete:\n";
+    #print Dumper $pw_out;
+    #print "PW_ALL before delete:\n";
+    #print Dumper $pw_all;
     # get rid of the uninteresting rubbish in the hash
     delete $pw_all->{$_} for keys %{$pw_out};
-    print "PW_all:\n";
-    print Dumper $pw_all;
+    #print "PW_all:\n";
+    #print Dumper $pw_all;
     my $s = "s";
     return +{
         map {
@@ -50,21 +59,21 @@ sub lex_local {
     };
 }
 sub lex_all {
+    #print "############# IN LEX_ALL #########################:\n";
     my ($pw_all, $pw_out) = @_;
-    use Data::Dumper;
     #print "PW_OUT:\n";
-    print Dumper $pw_out;
+    #print Dumper $pw_out;
+    #print "PW_all before delete:\n";
+    #print Dumper $pw_all;
     # get rid of the uninteresting rubbish in the hash
     delete $pw_all->{$_} for keys %{$pw_out};
-    print "PW_all:\n";
-    print Dumper $pw_all;
+    #print "PW_all:\n";
+    #print Dumper $pw_all;
     my $s = "s";
-    my $scal = \$s;
-    my $ref  = \\$s;
     return +{
         map {
             my $v = $pw_all->{$_};
-            $v = $$v if ( ref($v) eq ref($scal) || ref($v) eq ref($ref) );
+            $v = $$v if ( ref($v) eq ref(\$s) || ref($v) eq ref(\\$s) );
             s/^[\$\@\%\*]//;
             ($_, $v);
         } reverse sort keys %$pw_all
