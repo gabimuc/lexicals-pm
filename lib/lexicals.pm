@@ -8,10 +8,9 @@
 # - PadWalker
 # - Acme::Locals
 
-use 5.008003;
+use 5.10.1;
 use strict;
 use warnings;
-
 use PadWalker 1.92;
 
 package lexicals;
@@ -22,17 +21,53 @@ use base 'Exporter';
 our @EXPORT = qw(lexicals);
 
 sub lexicals {
-    my $hash = PadWalker::peek_my(1);
+    my $pw_all = PadWalker::peek_my(1);
+    my $pw_out = PadWalker::peek_my(2);
+    my $local = "";
+    return lex_all($pw_all, $pw_out) unless $local; 
+    return lex_local($pw_all, $pw_out) unless $local; 
+}
+
+sub lex_local {
+    my ($pw_all, $pw_out) = @_;
+    use Data::Dumper;
+    #print "PW_OUT:\n";
+    print Dumper $pw_out;
+    # get rid of the uninteresting rubbish in the hash
+    delete $pw_all->{$_} for keys %{$pw_out};
+    print "PW_all:\n";
+    print Dumper $pw_all;
     my $s = "s";
     my $scal = \$s;
     my $ref  = \\$s;
     return +{
         map {
-            my $v = $hash->{$_};
+            my $v = $pw_all->{$_};
             $v = $$v if ( ref($v) eq ref($scal) || ref($v) eq ref($ref) );
             s/^[\$\@\%\*]//;
             ($_, $v);
-        } reverse sort keys %$hash
+        } reverse sort keys %$pw_all
+    };
+}
+sub lex_all {
+    my ($pw_all, $pw_out) = @_;
+    use Data::Dumper;
+    #print "PW_OUT:\n";
+    print Dumper $pw_out;
+    # get rid of the uninteresting rubbish in the hash
+    delete $pw_all->{$_} for keys %{$pw_out};
+    print "PW_all:\n";
+    print Dumper $pw_all;
+    my $s = "s";
+    my $scal = \$s;
+    my $ref  = \\$s;
+    return +{
+        map {
+            my $v = $pw_all->{$_};
+            $v = $$v if ( ref($v) eq ref($scal) || ref($v) eq ref($ref) );
+            s/^[\$\@\%\*]//;
+            ($_, $v);
+        } reverse sort keys %$pw_all
     };
 }
 
