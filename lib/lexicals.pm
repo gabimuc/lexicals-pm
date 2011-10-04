@@ -22,21 +22,6 @@ our @EXPORT = qw(lex_local lex_all);
 
 use Data::Dumper;
 
-#sub lexicals {
-#use Carp;
-    #print "############# IN LEXEXICALS #########################:\n";
-    #my $pw_all = PadWalker::peek_my(1);
-    #my $pw_out = PadWalker::peek_my(2);
-    #print "PW_OUT incoming:\n";
-    #print Dumper $pw_out;
-    #print "PW_ALL incomin:\n";
-    #print Dumper $pw_all;
-    #my $local = "0";
-    #return lex_all($pw_all, $pw_out) unless $local; 
-    #return lex_local($pw_all, $pw_out) if $local; 
-    #confess "ERROR: No return value for package lexicals";
-#}
-
 sub lex_local {
     #print "############# IN LEX_LOCAL #########################:\n";
     #my ($pw_all, $pw_out) = @_;
@@ -50,21 +35,13 @@ sub lex_local {
     delete $pw_all->{$_} for keys %{$pw_out};
     #print "PW_all:\n";
     #print Dumper $pw_all;
-    my $s = "s";
-    return +{
-        map {
-            my $v = $pw_all->{$_};
-            $v = $$v if ( ref($v) eq ref(\$s) || ref($v) eq ref(\\$s) );
-            s/^[\$\@\%\*]//;
-            ($_, $v);
-        } reverse sort keys %$pw_all
-    };
+    return process_pw_output($pw_all);
 }
 sub lex_all {
     #print "############# IN LEX_ALL #########################:\n";
     #my ($pw_all, $pw_out) = @_;
     my $pw_all = PadWalker::peek_my(1);
-    my $pw_out = PadWalker::peek_my(2);
+    #my $pw_out = PadWalker::peek_my(2);
     #print "PW_OUT:\n";
     #print Dumper $pw_out;
     #print "PW_all before delete:\n";
@@ -73,15 +50,21 @@ sub lex_all {
     #delete $pw_all->{$_} for keys %{$pw_out};
     #print "PW_all:\n";
     #print Dumper $pw_all;
+    return process_pw_output($pw_all);
+}
+
+sub process_pw_output {
+    my $output = shift;
     my $s = "s";
     return +{
         map {
-            my $v = $pw_all->{$_};
+            my $v = $output->{$_};
             $v = $$v if ( ref($v) eq ref(\$s) || ref($v) eq ref(\\$s) );
             s/^[\$\@\%\*]//;
             ($_, $v);
-        } reverse sort keys %$pw_all
+        } reverse sort keys %$output
     };
+
 }
 
 1;
